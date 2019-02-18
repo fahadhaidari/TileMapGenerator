@@ -1,0 +1,29 @@
+html, body {
+  background: #EEEEEE;
+  font-family: Courier;
+}
+
+a {
+  display: block;
+  text-align: center;
+  color: #4488FF;
+  margin-top: 10px;
+}
+
+canvas {
+  display: block;
+  background: #EEEEEE;
+  overflow: hidden;
+  margin: 0px auto;
+  border: solid 5px #555555;
+  border-radius: 1px;
+}
+
+input[type=color] {
+  display: block;
+  margin: 0px auto;
+  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+}
