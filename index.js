@@ -1,6 +1,5 @@
 window.onload = function() {
   const map = [];
-  const tilesArray = [];
   let data = null;
   let mouseX = 0;
   let mouseY = 0;
@@ -21,22 +20,24 @@ window.onload = function() {
   document.body.appendChild(colorPicker);
   document.body.appendChild(a);
 
-  document.body.addEventListener('keyup', ( {keyCode }) => {
+  document.body.addEventListener('keyup', ({ keyCode }) => {
     if (keyCode === 69) { drawMode = "erase"; } // e
 
     if (keyCode === 68) { drawMode = "draw"; } // d
   });
 
   document.body.addEventListener('mousedown', (e) => {
+    if (e.target.type === 'color') return;
+
     isMouseDown = true;
   });
 
-  document.body.addEventListener('mousemove', (e) => {
-    mouseX = e.offsetX;
-    mouseY = e.offsetY;
+  document.body.addEventListener('mousemove', ({ offsetX, offsetY }) => {
+    mouseX = offsetX;
+    mouseY = offsetY;
   });
 
-  document.body.addEventListener('mouseup', (e) => {
+  document.body.addEventListener('mouseup', () => {
     isMouseDown = false;
   });
 
@@ -67,7 +68,7 @@ window.onload = function() {
       const yVal = findModular(mouseY);
       const id = xVal + '-' + yVal;
 
-      if (!tilesArray.includes(id)) {
+      if (!findTile(id)) {
         const tile = {
           id,
           TILE_SIZE,
@@ -75,8 +76,6 @@ window.onload = function() {
           y: yVal,
           color: colorPicker.value
         };
-
-        tilesArray.push(id);
 
         a.href = 'data:' + data;
         a.download = 'map.json';
@@ -87,18 +86,32 @@ window.onload = function() {
 
         draw(tile);
       }
+
       if (drawMode === "erase") {
-        const index = tilesArray.indexOf(id);
-        if (index > -1) {
-          tilesArray.splice(id, 1);
+        const tile = findTile(id);
+
+        if (tile) {
+          map.splice(tile.index, 1);
           context.clearRect(xVal, yVal, TILE_SIZE, TILE_SIZE);
         }
         return;
+      } else {
+        return
       }
     }
     drawGrid();
   }
 
+  const findTile = function(id) {
+    for (let i in map) {
+      if (id === map[i].id) {
+        return {
+          id,
+          index: i,
+        };
+      }
+    }
+  }
 
   const frame = function() {
     update();
